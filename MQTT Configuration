@@ -1,0 +1,10 @@
+📡 MQTT Configuration
+javascript// MQTT Trigger Settings
+{
+  "host": "www.sensesiot.net",
+  "port": 3057,
+  "username": "YOUR_UID",
+  "password": "",
+  "topic": "data/YOUR_DEVICEKEY/+",
+  "qos": 0
+}
