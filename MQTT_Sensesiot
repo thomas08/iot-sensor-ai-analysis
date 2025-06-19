@@ -1,0 +1,28 @@
+การเชื่อมต่อ Sensesiot (v2) เข้ากับ MQTT 
+Connect MQTT Server ด้วยข้อมูลต่อไปนี้
+Host: mqtt://www.sensesiot.net
+Port: 3057
+Username: ใส่เป็น uid (User ID) ของผู้ใช้ (หาจากหน้า user)
+Password: ไม่ใส่
+Protocol ส่งข้อมูล
+Publish Topic : data/{devicekey}/{slot}
+devicekey หาได้จาก IoT Garage
+slot คือช่อง slot ข้อมูล เป็นตัวเลข
+Payload: เป็นค่าตัวเลข
+Subscribe Topic : data/{devicekey}/{slot} (เหมือนกับ Publish)
+Protocol Control อุปกรณ์
+Publish Topic : control/{devicekey}/{slot}
+devicekey หาได้จาก IoT Garage
+slot คือช่อง control slot เป็นตัวเลข
+Payload ที่รองรับ
+ไม่ใส่ Payload: สำหรับปุ่ม Push 
+on, off (ตัวพิมพ์เล็กทั้งหมด): สำหรับปุ่ม Toggle
+ค่าตัวเลข: สำหรับ Slider
+Subscribe Topic : control/{deviceid}/{slot} (เหมือนกับ Publish)
+Protocol Retain: ใช้สำหรับเรียกค่า data, control จาก server ซึ่งจะรับค่าได้ด้วย mqtt subscribe
+Data
+Publish Topic : retain/data/{devicekey}/{slot}
+Subscribe Topic : data/{devicekey}/{slot}
+Control
+Publish Topic : retain/control/{devicekey}/{slot}
+Subscribe Topic : control/{devicekey}/{slot}
