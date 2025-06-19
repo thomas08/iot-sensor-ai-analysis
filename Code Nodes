@@ -1,0 +1,112 @@
+
+javascript// Code Node - แปลงข้อมูล MQTT เป็นรูปแบบที่ AI เข้าใจ
+try {
+  const input = $input.first().json;
+  const rawValue = input.message || input.payload || input.value || 0;
+  const topic = input.topic || 'data/qwCOowlTnOYNSLVmZVMW/1';
+  const timestamp = new Date().toLocaleString('th-TH');
+  
+  console.log('📡 Raw value from MQTT:', rawValue);
+  
+  // แปลงค่าเป็นตัวเลข
+  let value = 0;
+  if (rawValue !== null && rawValue !== undefined && rawValue !== '') {
+    const parsedValue = parseFloat(rawValue);
+    if (!isNaN(parsedValue)) {
+      value = parsedValue;
+    }
+  }
+  
+  // แยกประเภท sensor
+  const topicParts = topic.split('/');
+  const deviceKey = topicParts[1] || 'qwCOowlTnOYNSLVmZVMW';
+  let slot = topicParts[2] || '1';
+  
+  // กำหนดประเภท sensor
+  let sensorName, sensorType, unit, icon, assessment;
+  
+  switch(slot) {
+    case '1':
+      sensorName = 'อุณหภูมิ';
+      sensorType = 'temperature';
+      unit = '°C';
+      icon = '🌡️';
+      if (value < 16) assessment = 'เย็นมาก';
+      else if (value < 20) assessment = 'เย็น';
+      else if (value < 25) assessment = 'สบาย';
+      else if (value < 30) assessment = 'อบอุ่น';
+      else if (value < 35) assessment = 'ร้อน';
+      else assessment = 'ร้อนมาก';
+      break;
+      
+    case '2':
+      sensorName = 'ความชื้น';
+      sensorType = 'humidity';
+      unit = '%';
+      icon = '💧';
+      if (value < 30) assessment = 'แห้งมาก';
+      else if (value < 40) assessment = 'แห้ง';
+      else if (value < 60) assessment = 'เหมาะสม';
+      else if (value < 80) assessment = 'ชื้น';
+      else assessment = 'ชื้นมาก';
+      break;
+      
+    default:
+      sensorName = 'Unknown';
+      sensorType = 'unknown';
+      unit = '';
+      icon = '📊';
+      assessment = 'ไม่ทราบ';
+  }
+  
+  console.log(`${icon} ${sensorName}: ${value}${unit} (${assessment})`);
+  
+  // สร้าง prompt สำหรับ AI
+  const message = `${icon} ได้รับข้อมูล${sensorName}ใหม่!
+
+📊 รายละเอียด:
+- ${sensorName}: ${value}${unit}
+- ประเมินเบื้องต้น: ${assessment}
+- เวลา: ${timestamp}
+- อุปกรณ์: ${deviceKey}
+
+โปรดวิเคราะห์ข้อมูล${sensorName} ${value}${unit} และให้ความเห็น:
+1. ค่านี้เป็นอย่างไร (ปกติ/สูง/ต่ำ)
+2. เหมาะสมสำหรับสภาพแวดล้อมหรือไม่  
+3. คำแนะนำหรือข้อควรระวัง
+4. ผลกระทบต่อสุขภาพ
+
+ตอบเป็นภาษาไทยแบบกระชับ`;
+
+  return [{
+    json: {
+      message: message,
+      sensor_data: {
+        name: sensorName,
+        type: sensorType,
+        value: value,
+        unit: unit,
+        icon: icon,
+        slot: slot,
+        assessment: assessment,
+        timestamp: timestamp,
+        topic: topic,
+        device_key: deviceKey
+      }
+    }
+  }];
+  
+} catch (error) {
+  console.log('❌ Error:', error.message);
+  return [{
+    json: {
+      message: "เกิดข้อผิดพลาดในการประมวลผลข้อมูล",
+      sensor_data: {
+        name: "Error",
+        value: 0,
+        unit: "",
+        icon: "❌"
+      }
+    }
+  }];
+}
