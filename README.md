@@ -38,3 +38,12 @@ VCC  → 3.3V
 GND  → GND
 SDA  → GPIO21
 SCL  → GPIO22
+
+
+
+Environment Variables
+envN8N_HOST=localhost
+N8N_PORT=5678
+OLLAMA_HOST=localhost:11434
+MQTT_HOST=www.sensesiot.net
+MQTT_PORT=3057
